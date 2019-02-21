@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">singleclick</string>
+    // just generate a unique key for view tag
+    <string name="com_orange_note_singleclick_tag_key">com_orange_note_singleclick_tag_key</string>
+</resources>
