@@ -7,6 +7,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import java.lang.reflect.Method;
@@ -20,11 +21,16 @@ import java.lang.reflect.Method;
 @Aspect
 public class SingleClickAspect {
 
-    private static final String ON_CLICK_POINTCUTS = "execution(* android.view.View.OnClickListener(..))";
+    private static final String ON_CLICK_POINTCUTS = "execution(* android.view.View.OnClickListener.onClick(..))";
     // view tag unique key, must be one of resource id
     private static final int SINGLE_CLICK_KEY = R.string.com_orange_note_singleclick_tag_key;
 
-    @Around(ON_CLICK_POINTCUTS)
+    @Pointcut(ON_CLICK_POINTCUTS)
+    public void onClickPointcut() {
+
+    }
+
+    @Around("onClickPointcut()")
     public void throttleClick(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             // check for Except annotation
@@ -49,12 +55,13 @@ public class SingleClickAspect {
             Long lastClickTime = (Long) view.getTag(SINGLE_CLICK_KEY);
             // if lastClickTime is null, means click first time
             if (lastClickTime == null) {
+                view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
                 joinPoint.proceed();
                 return;
             }
             if (canClick(lastClickTime)) {
-                joinPoint.proceed();
                 view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
+                joinPoint.proceed();
             }
         } catch (Throwable e) {
             e.printStackTrace();
