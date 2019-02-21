@@ -4,10 +4,16 @@ import android.os.SystemClock;
 import android.view.View;
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
+
+import java.lang.reflect.Method;
 
 /**
+ * 处理点击事件AOP
+ *
  * @author maomao
  * @date 2019/2/21
  */
@@ -21,6 +27,18 @@ public class SingleClickAspect {
     @Around(ON_CLICK_POINTCUTS)
     public void throttleClick(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
+            // check for Except annotation
+            Signature signature = joinPoint.getSignature();
+            if (signature instanceof MethodSignature) {
+                MethodSignature methodSignature = (MethodSignature) signature;
+                Method method = methodSignature.getMethod();
+                // 如果有 Except 注解，就不需要做点击防抖处理
+                boolean isExcept = method != null && method.isAnnotationPresent(Except.class);
+                if (isExcept) {
+                    joinPoint.proceed();
+                    return;
+                }
+            }
             Object[] args = joinPoint.getArgs();
             View view = getViewFromArgs(args);
             // unknown click type, so skip it
@@ -46,6 +64,7 @@ public class SingleClickAspect {
 
     /**
      * 获取 view 参数
+     *
      * @param args
      * @return
      */
@@ -61,6 +80,7 @@ public class SingleClickAspect {
 
     /**
      * 判断是否达到可以点击的时间间隔
+     *
      * @param lastClickTime
      * @return
      */
