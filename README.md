@@ -33,7 +33,13 @@ Usage
         
 2. 在 app/build.gradle 中添加依赖
 
-        implementation 'com.orange.note:singleclick:1.0.0'
+        apply plugin: 'com.hujiang.android-aspectjx'
+
+        ...
+        
+        dependencies {
+            implementation 'com.orange.note:singleclick:1.0.0'
+        }
         
         
 3. 如果有不需要做防抖处理的地方，添加 @Except 即可。比如 :
@@ -55,6 +61,10 @@ Proguard
 =========
 
     -keep com.orange.note.singleclick.** {*;}
+    
+TODO
+====
+1. add onItemClick throttle click event
         
 changelog
 =========
