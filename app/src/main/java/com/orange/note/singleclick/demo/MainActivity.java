@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             @Except
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "normal button click");
+                Log.i(TAG, "normal button click, except throttle click event");
 
             }
         });

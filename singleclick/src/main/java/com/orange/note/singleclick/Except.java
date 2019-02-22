@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
  * @date 2019/2/21
  */
 @Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface Except {
 }

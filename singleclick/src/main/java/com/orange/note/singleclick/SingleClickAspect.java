@@ -50,6 +50,7 @@ public class SingleClickAspect {
                 // 如果有 Except 注解，就不需要做点击防抖处理
                 boolean isExcept = method != null && method.isAnnotationPresent(Except.class);
                 if (isExcept) {
+                    Log.d(TAG, "the click method is except, so proceed it");
                     joinPoint.proceed();
                     return;
                 }
