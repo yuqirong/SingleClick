@@ -1,6 +1,7 @@
 package com.orange.note.singleclick;
 
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -21,16 +22,24 @@ import java.lang.reflect.Method;
 @Aspect
 public class SingleClickAspect {
 
+    private static final String TAG = "SingleClickAspect";
+
     private static final String ON_CLICK_POINTCUTS = "execution(* android.view.View.OnClickListener.onClick(..))";
+    // 如果 onClick 是写在 xml 里面的
+    private static final String ON_CLICK_IN_XML_POINTCUTS = "execution(* android.support.v7.app.AppCompatViewInflater.DeclaredOnClickListener.onClick(..))";
+
     // view tag unique key, must be one of resource id
     private static final int SINGLE_CLICK_KEY = R.string.com_orange_note_singleclick_tag_key;
 
     @Pointcut(ON_CLICK_POINTCUTS)
-    public void onClickPointcut() {
-
+    public void onClickPointcuts() {
     }
 
-    @Around("onClickPointcut()")
+    @Pointcut(ON_CLICK_IN_XML_POINTCUTS)
+    public void onClickInXmlPointcuts() {
+    }
+
+    @Around("onClickPointcuts() || onClickInXmlPointcuts()")
     public void throttleClick(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             // check for Except annotation
@@ -55,16 +64,20 @@ public class SingleClickAspect {
             Long lastClickTime = (Long) view.getTag(SINGLE_CLICK_KEY);
             // if lastClickTime is null, means click first time
             if (lastClickTime == null) {
+                Log.d(TAG, "the click event is first time, so proceed it");
                 view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
                 joinPoint.proceed();
                 return;
             }
             if (canClick(lastClickTime)) {
+                Log.d(TAG, "the click event time interval is legal, so proceed it");
                 view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
                 joinPoint.proceed();
             }
+            Log.d(TAG, "throttle the click event, view id = " + view.getId());
         } catch (Throwable e) {
             e.printStackTrace();
+            Log.d(TAG, e.getMessage());
             joinPoint.proceed();
         }
     }

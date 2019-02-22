@@ -4,6 +4,12 @@ View 点击事件防抖处理，基于 AOP
 
 默认的防抖时间间隔为 500 ms
 
+支持以下三种:
+
+1. setOnClickListener
+2. ButterKnife @OnClick
+3. 在 xml 布局中设置 android:onClick 的点击方法
+
 latest version: v1.0.0
 
 Usage

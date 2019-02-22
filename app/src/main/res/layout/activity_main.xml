@@ -7,6 +7,12 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请查看log来验证点击事件过滤情况"
+        android:padding="10dp"/>
+
     <Button
         android:id="@+id/throttle_button"
         android:layout_width="wrap_content"
@@ -18,5 +24,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="normal button, try to click me" />
+
+    <Button
+        android:id="@+id/normal_xml_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="normalXmlButtonOnClick"
+        android:text="normal xml button, try to click me" />
 
 </LinearLayout>

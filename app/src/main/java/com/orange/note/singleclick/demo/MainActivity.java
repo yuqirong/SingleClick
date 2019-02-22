@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         View throttleButton = findViewById(R.id.throttle_button);
         View normalButton = findViewById(R.id.normal_button);
+        View normalXmlButton = findViewById(R.id.normal_xml_button);
         throttleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,7 +33,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    public void normalXmlButtonOnClick(View view) {
+        Log.i(TAG, "throttle the click event normal xml button click");
     }
 
 }
