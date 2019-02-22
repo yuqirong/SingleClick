@@ -10,7 +10,7 @@ View 点击事件防抖处理，基于 AOP
 2. ButterKnife @OnClick
 3. 在 xml 布局中设置 android:onClick 的点击方法
 
-latest version: v1.0.0
+latest version: v1.0.2
 
 Usage
 =====
@@ -44,7 +44,7 @@ Usage
         ...
         
         dependencies {
-            implementation 'com.orange.note:singleclick:1.0.0'
+            implementation 'com.orange.note:singleclick:1.0.2'
         }
         
         
@@ -74,6 +74,7 @@ TODO
         
 changelog
 =========
+* v1.0.2 support ButterKnife
 * v1.0.1 modify aop jar
 * v1.0.0 init commit
 
