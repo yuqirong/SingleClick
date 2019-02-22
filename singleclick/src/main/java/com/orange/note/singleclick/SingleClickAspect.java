@@ -23,11 +23,12 @@ import java.lang.reflect.Method;
 public class SingleClickAspect {
 
     private static final String TAG = "SingleClickAspect";
-
+    // normal onClick
     private static final String ON_CLICK_POINTCUTS = "execution(* android.view.View.OnClickListener.onClick(..))";
     // 如果 onClick 是写在 xml 里面的
     private static final String ON_CLICK_IN_XML_POINTCUTS = "execution(* android.support.v7.app.AppCompatViewInflater.DeclaredOnClickListener.onClick(..))";
-
+    // butterknife on click
+    private static final String ON_CLICK_IN_BUTTER_KNIFE_POINTCUTS = "execution(@butterknife.OnClick * *(..))";
     // view tag unique key, must be one of resource id
     private static final int SINGLE_CLICK_KEY = R.string.com_orange_note_singleclick_tag_key;
 
@@ -39,7 +40,11 @@ public class SingleClickAspect {
     public void onClickInXmlPointcuts() {
     }
 
-    @Around("onClickPointcuts() || onClickInXmlPointcuts()")
+    @Pointcut(ON_CLICK_IN_BUTTER_KNIFE_POINTCUTS)
+    public void onClickInButterKnifePointcuts() {
+    }
+
+    @Around("onClickPointcuts() || onClickInXmlPointcuts() ||  onClickInButterKnifePointcuts()")
     public void throttleClick(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             // check for Except annotation
@@ -59,6 +64,7 @@ public class SingleClickAspect {
             View view = getViewFromArgs(args);
             // unknown click type, so skip it
             if (view == null) {
+                Log.d(TAG, "unknown type method, so proceed it");
                 joinPoint.proceed();
                 return;
             }
@@ -74,6 +80,7 @@ public class SingleClickAspect {
                 Log.d(TAG, "the click event time interval is legal, so proceed it");
                 view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
                 joinPoint.proceed();
+                return;
             }
             Log.d(TAG, "throttle the click event, view id = " + view.getId());
         } catch (Throwable e) {
