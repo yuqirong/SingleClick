@@ -74,5 +74,6 @@ TODO
         
 changelog
 =========
+* v1.0.1 modify aop jar
 * v1.0.0 init commit
 

@@ -18,7 +18,12 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
+        maven {
+            url "http://www.91chengguo.com:8081/repository/maven-releases/"
+        }
+        maven {
+            url "http://www.91chengguo.com:8081/repository/maven-snapshots/"
+        }
     }
 }
 

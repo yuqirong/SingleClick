@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.hujiang.android-aspectjx'
 apply plugin: 'maven'
 
 android {
@@ -28,6 +27,7 @@ android {
 
 dependencies {
     compileOnly 'com.android.support:appcompat-v7:28.0.0'
+    api 'org.aspectj:aspectjrt:1.8.9'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -64,7 +64,7 @@ uploadArchives {
                 authentication(userName: username, password: password)
             }
             pom.packaging = 'aar'
-            pom.version = "1.0.0"
+            pom.version = "1.0.1"
             pom.groupId = 'com.orange.note'
             pom.artifactId = "singleclick"
         }
