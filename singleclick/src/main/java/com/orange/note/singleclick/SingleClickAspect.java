@@ -46,48 +46,42 @@ public class SingleClickAspect {
 
     @Around("onClickPointcuts() || onClickInXmlPointcuts() ||  onClickInButterKnifePointcuts()")
     public void throttleClick(ProceedingJoinPoint joinPoint) throws Throwable {
-        try {
-            // check for Except annotation
-            Signature signature = joinPoint.getSignature();
-            if (signature instanceof MethodSignature) {
-                MethodSignature methodSignature = (MethodSignature) signature;
-                Method method = methodSignature.getMethod();
-                // 如果有 Except 注解，就不需要做点击防抖处理
-                boolean isExcept = method != null && method.isAnnotationPresent(Except.class);
-                if (isExcept) {
-                    Log.d(TAG, "the click method is except, so proceed it");
-                    joinPoint.proceed();
-                    return;
-                }
-            }
-            Object[] args = joinPoint.getArgs();
-            View view = getViewFromArgs(args);
-            // unknown click type, so skip it
-            if (view == null) {
-                Log.d(TAG, "unknown type method, so proceed it");
+        // check for Except annotation
+        Signature signature = joinPoint.getSignature();
+        if (signature instanceof MethodSignature) {
+            MethodSignature methodSignature = (MethodSignature) signature;
+            Method method = methodSignature.getMethod();
+            // 如果有 Except 注解，就不需要做点击防抖处理
+            boolean isExcept = method != null && method.isAnnotationPresent(Except.class);
+            if (isExcept) {
+                Log.d(TAG, "the click method is except, so proceed it");
                 joinPoint.proceed();
                 return;
             }
-            Long lastClickTime = (Long) view.getTag(SINGLE_CLICK_KEY);
-            // if lastClickTime is null, means click first time
-            if (lastClickTime == null) {
-                Log.d(TAG, "the click event is first time, so proceed it");
-                view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
-                joinPoint.proceed();
-                return;
-            }
-            if (canClick(lastClickTime)) {
-                Log.d(TAG, "the click event time interval is legal, so proceed it");
-                view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
-                joinPoint.proceed();
-                return;
-            }
-            Log.d(TAG, "throttle the click event, view id = " + view.getId());
-        } catch (Throwable e) {
-            e.printStackTrace();
-            Log.d(TAG, e.getMessage());
-            joinPoint.proceed();
         }
+        Object[] args = joinPoint.getArgs();
+        View view = getViewFromArgs(args);
+        // unknown click type, so skip it
+        if (view == null) {
+            Log.d(TAG, "unknown type method, so proceed it");
+            joinPoint.proceed();
+            return;
+        }
+        Long lastClickTime = (Long) view.getTag(SINGLE_CLICK_KEY);
+        // if lastClickTime is null, means click first time
+        if (lastClickTime == null) {
+            Log.d(TAG, "the click event is first time, so proceed it");
+            view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
+            joinPoint.proceed();
+            return;
+        }
+        if (canClick(lastClickTime)) {
+            Log.d(TAG, "the click event time interval is legal, so proceed it");
+            view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
+            joinPoint.proceed();
+            return;
+        }
+        Log.d(TAG, "throttle the click event, view id = " + view.getId());
     }
 
     /**
