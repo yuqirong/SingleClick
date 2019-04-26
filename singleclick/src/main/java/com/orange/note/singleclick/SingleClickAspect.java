@@ -4,6 +4,8 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
+import com.elvishew.xlog.XLog;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -46,6 +48,14 @@ public class SingleClickAspect {
 
     @Around("onClickPointcuts() || onClickInXmlPointcuts() ||  onClickInButterKnifePointcuts()")
     public void throttleClick(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object[] args = joinPoint.getArgs();
+        View view = getViewFromArgs(args);
+        // unknown click type, so skip it
+        if (view == null) {
+            Log.d(TAG, "unknown type method, so proceed it");
+            joinPoint.proceed();
+            return;
+        }
         // check for Except annotation
         Signature signature = joinPoint.getSignature();
         if (signature instanceof MethodSignature) {
@@ -55,27 +65,22 @@ public class SingleClickAspect {
             boolean isExcept = method != null && method.isAnnotationPresent(Except.class);
             if (isExcept) {
                 Log.d(TAG, "the click method is except, so proceed it");
+                XLog.tag(TAG).i("on click, id = " + ResourceUtil.getResourceName(view.getContext(), view.getId()));
                 joinPoint.proceed();
                 return;
             }
-        }
-        Object[] args = joinPoint.getArgs();
-        View view = getViewFromArgs(args);
-        // unknown click type, so skip it
-        if (view == null) {
-            Log.d(TAG, "unknown type method, so proceed it");
-            joinPoint.proceed();
-            return;
         }
         Long lastClickTime = (Long) view.getTag(SINGLE_CLICK_KEY);
         // if lastClickTime is null, means click first time
         if (lastClickTime == null) {
             Log.d(TAG, "the click event is first time, so proceed it");
+            XLog.tag(TAG).i("on click, id = " + ResourceUtil.getResourceName(view.getContext(), view.getId()));
             view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
             joinPoint.proceed();
             return;
         }
         if (canClick(lastClickTime)) {
+            XLog.tag(TAG).i("on click, id = " + ResourceUtil.getResourceName(view.getContext(), view.getId()));
             Log.d(TAG, "the click event time interval is legal, so proceed it");
             view.setTag(SINGLE_CLICK_KEY, SystemClock.elapsedRealtime());
             joinPoint.proceed();

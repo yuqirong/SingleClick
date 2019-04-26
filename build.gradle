@@ -19,10 +19,10 @@ allprojects {
         google()
         jcenter()
         maven {
-            url "http://www.91chengguo.com:8081/repository/maven-releases/"
+            url "http://maven.91chengguo.com/repository/maven-releases/"
         }
         maven {
-            url "http://www.91chengguo.com:8081/repository/maven-snapshots/"
+            url "http://maven.91chengguo.com/repository/maven-snapshots/"
         }
     }
 }
