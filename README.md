@@ -23,18 +23,6 @@ Usage
                 classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.4'
             }
         }
-        
-        allprojects {
-            repositories {
-                ...
-                maven {
-                    url "http://www.91chengguo.com:8081/repository/maven-releases/"
-                }
-                maven {
-                    url "http://www.91chengguo.com:8081/repository/maven-snapshots/"
-                }
-            }
-        }
 
         
 2. 在 app/build.gradle 中添加依赖
